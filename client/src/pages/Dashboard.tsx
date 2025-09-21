@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { getPatients } from "../services/api";
 import PatientCard from "../components/PatientCard";
-import RiskIndicator from "../components/RiskIndicator";
 import CholesterolChart from "../Charts/CholesterolChart";
 import BPChart from "../Charts/BPChart";
 import BMIChart from "../Charts/BMIChart";
@@ -94,12 +93,11 @@ const Dashboard: React.FC = () => {
       {/* What-if Simulation with guideline mode */}
       <SimulationPanel useOfficialGuidelines={useOfficialGuidelines} />
 
-      {/* Patient cards + risk badges */}
+      {/* Patient cards (RiskIndicator is inside PatientCard now) */}
       <div className={styles.patients}>
         {patients.map((patient) => (
           <div key={patient.id} className={styles.patientWrapper}>
             <PatientCard patient={patient} />
-            <RiskIndicator riskLevel={patient.riskLevel} />
           </div>
         ))}
       </div>

@@ -1,99 +1,92 @@
-// controllers/patientController.js
+// server/controllers/patientController.js
 
-const patientModel = require("../models/patientModel");
+const db = require("../config/db");
 
-// --- Helper function: Apply guideline-based risk rules ---
-const calculateRisk = (patient) => {
-  let riskLevel = "Low";
-  let reasons = [];
-
-  // Cholesterol guideline
-  if (patient.cholesterol > 240) {
-    riskLevel = "High";
-    reasons.push("High cholesterol (>240 mg/dL)");
-  } else if (patient.cholesterol >= 200) {
-    riskLevel = "Medium";
-    reasons.push("Borderline cholesterol (200–239 mg/dL)");
+// Helper function for simple prediction (linear trend)
+function predictFuture(values, months = 6) {
+  const predictions = [];
+  const n = values.length;
+  if (n < 2) {
+    // Not enough data, just repeat last value
+    for (let i = 1; i <= months; i++) {
+      predictions.push(values[n - 1]);
+    }
+    return predictions;
   }
 
-  // Blood pressure guideline
-  if (patient.blood_pressure > 140) {
-    riskLevel = "High";
-    reasons.push("High blood pressure (>140 mmHg)");
-  } else if (patient.blood_pressure >= 120) {
-    if (riskLevel !== "High") riskLevel = "Medium";
-    reasons.push("Elevated blood pressure (120–139 mmHg)");
+  const lastValue = values[n - 1];
+  const secondLast = values[n - 2];
+  const slope = lastValue - secondLast; // simple difference
+
+  for (let i = 1; i <= months; i++) {
+    predictions.push(lastValue + slope * i);
   }
 
-  // BMI guideline
-  if (patient.bmi >= 30) {
-    riskLevel = "High";
-    reasons.push("Obesity (BMI ≥ 30)");
-  } else if (patient.bmi >= 25) {
-    if (riskLevel !== "High") riskLevel = "Medium";
-    reasons.push("Overweight (BMI 25–29.9)");
-  }
+  return predictions;
+}
 
-  // Glucose guideline
-  if (patient.glucose >= 126) {
-    riskLevel = "High";
-    reasons.push("Diabetes (Glucose ≥ 126 mg/dL)");
-  } else if (patient.glucose >= 100) {
-    if (riskLevel !== "High") riskLevel = "Medium";
-    reasons.push("Prediabetes (Glucose 100–125 mg/dL)");
-  }
-
-  return { riskLevel, reasons };
-};
-
-// --- Controller Functions ---
-
-// Get all patients
-const getPatients = async (req, res, next) => {
+// @desc    Get all patients
+exports.getPatients = async (req, res) => {
   try {
-    const patients = await patientModel.getAllPatients();
-
-    // Add risk calculation for each patient
-    const patientsWithRisk = patients.map((p) => {
-      const { riskLevel, reasons } = calculateRisk(p);
-      return { ...p, riskLevel, reasons };
-    });
-
-    res.json(patientsWithRisk);
-  } catch (error) {
-    next(error);
+    const result = await db.query("SELECT * FROM patients ORDER BY id ASC");
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
   }
 };
 
-// Get a single patient by ID
-const getPatient = async (req, res, next) => {
+// @desc    Get single patient
+exports.getPatientById = async (req, res) => {
   try {
-    const patient = await patientModel.getPatientById(req.params.id);
-    if (!patient) {
+    const { id } = req.params;
+    const result = await db.query("SELECT * FROM patients WHERE id = $1", [id]);
+
+    if (result.rows.length === 0) {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    const { riskLevel, reasons } = calculateRisk(patient);
-    res.json({ ...patient, riskLevel, reasons });
-  } catch (error) {
-    next(error);
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
   }
 };
 
-// Add a new patient
-const createPatient = async (req, res, next) => {
+// @desc    Predict future vitals for a patient
+exports.getPatientPrediction = async (req, res) => {
   try {
-    const newPatient = await patientModel.addPatient(req.body);
-    const { riskLevel, reasons } = calculateRisk(newPatient);
+    const { id } = req.params;
 
-    res.status(201).json({ ...newPatient, riskLevel, reasons });
-  } catch (error) {
-    next(error);
+    // Get patient data
+    const result = await db.query("SELECT * FROM patients WHERE id = $1", [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const patient = result.rows[0];
+
+    // Mock historical data (you could extend DB later)
+    const cholesterolHistory = [200, 210, 220];
+    const bpHistory = [120, 125, 130];
+    const bmiHistory = [25, 25.5, 26];
+    const glucoseHistory = [100, 105, 110];
+
+    // Predict next 6 months
+    const predictions = {
+      cholesterol: predictFuture(cholesterolHistory, 6),
+      blood_pressure: predictFuture(bpHistory, 6),
+      bmi: predictFuture(bmiHistory, 6),
+      glucose: predictFuture(glucoseHistory, 6),
+    };
+
+    res.json({
+      patientId: patient.id,
+      name: patient.name,
+      predictions,
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
   }
-};
-
-module.exports = {
-  getPatients,
-  getPatient,
-  createPatient,
 };
