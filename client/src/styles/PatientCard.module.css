@@ -1,0 +1,52 @@
+/* src/styles/PatientCard.module.css */
+
+.card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.name {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.risk {
+  margin-top: 10px;
+  font-weight: bold;
+  padding: 6px 10px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+/* Risk Level Colors */
+.low {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.medium {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.high {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.reasons {
+  margin-top: 10px;
+  padding-left: 20px;
+  color: #555;
+  font-size: 14px;
+}
