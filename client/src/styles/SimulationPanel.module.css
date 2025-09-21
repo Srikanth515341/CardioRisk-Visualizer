@@ -1,0 +1,85 @@
+.panel {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px 0;
+  max-width: 600px;
+}
+
+.panel h2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.panel p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.inputs label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  color: #444;
+}
+
+.inputs input {
+  margin-top: 5px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.button {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.button:hover {
+  background: #125ca1;
+}
+
+.result {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  background: #f9f9f9;
+  border-left: 5px solid #1976d2;
+}
+
+.result h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.result ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 14px;
+  color: #444;
+}
+
+.result p {
+  font-size: 14px;
+  color: #666;
+}

@@ -7,6 +7,7 @@ import RiskIndicator from "../components/RiskIndicator";
 import CholesterolChart from "../Charts/CholesterolChart";
 import BPChart from "../Charts/BPChart";
 import BMIChart from "../Charts/BMIChart";
+import SimulationPanel from "../components/SimulationPanel"; // ✅ New import
 import styles from "../styles/Dashboard.module.css";
 
 interface Patient {
@@ -47,6 +48,9 @@ const Dashboard: React.FC = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>CardioRisk Visualizer Dashboard</h1>
+
+      {/* ✅ New Simulation Panel */}
+      <SimulationPanel />
 
       <div className={styles.patients}>
         {patients.map((patient) => (
