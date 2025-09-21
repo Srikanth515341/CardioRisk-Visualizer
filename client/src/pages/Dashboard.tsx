@@ -7,8 +7,9 @@ import RiskIndicator from "../components/RiskIndicator";
 import CholesterolChart from "../Charts/CholesterolChart";
 import BPChart from "../Charts/BPChart";
 import BMIChart from "../Charts/BMIChart";
-import TimelineChart from "../Charts/TimelineChart"; // ✅ added
+import TimelineChart from "../Charts/TimelineChart";
 import SimulationPanel from "../components/SimulationPanel";
+import { exportToPDF } from "../services/reportService"; // ✅ new import
 import styles from "../styles/Dashboard.module.css";
 
 interface Patient {
@@ -47,8 +48,25 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} id="dashboard-report">
       <h1 className={styles.title}>CardioRisk Visualizer Dashboard</h1>
+
+      {/* Export button */}
+      <div style={{ textAlign: "right", marginBottom: "20px" }}>
+        <button
+          onClick={() => exportToPDF("dashboard-report")}
+          style={{
+            padding: "10px 20px",
+            backgroundColor: "#007bff",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Export PDF
+        </button>
+      </div>
 
       {/* What-if Simulation */}
       <SimulationPanel />
@@ -70,7 +88,7 @@ const Dashboard: React.FC = () => {
         <BMIChart data={patients} />
       </div>
 
-      {/* Timeline chart (full width) */}
+      {/* Timeline chart */}
       <div style={{ marginTop: 30 }}>
         <TimelineChart />
       </div>
