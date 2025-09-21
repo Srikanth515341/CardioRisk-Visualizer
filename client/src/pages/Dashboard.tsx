@@ -9,7 +9,7 @@ import BPChart from "../Charts/BPChart";
 import BMIChart from "../Charts/BMIChart";
 import TimelineChart from "../Charts/TimelineChart";
 import SimulationPanel from "../components/SimulationPanel";
-import { exportToPDF } from "../services/reportService"; // ✅ new import
+import { exportToPDF } from "../services/reportService";
 import styles from "../styles/Dashboard.module.css";
 
 interface Patient {
@@ -28,6 +28,9 @@ interface Patient {
 const Dashboard: React.FC = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // ✅ State for guideline toggle
+  const [useOfficialGuidelines, setUseOfficialGuidelines] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,8 +71,28 @@ const Dashboard: React.FC = () => {
         </button>
       </div>
 
-      {/* What-if Simulation */}
-      <SimulationPanel />
+      {/* ✅ Guideline Toggle */}
+      <div style={{ marginBottom: "20px", textAlign: "center" }}>
+        <label style={{ fontWeight: "bold", marginRight: "10px" }}>
+          Guideline Mode:
+        </label>
+        <button
+          onClick={() => setUseOfficialGuidelines(!useOfficialGuidelines)}
+          style={{
+            padding: "8px 16px",
+            backgroundColor: useOfficialGuidelines ? "#28a745" : "#6c757d",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          {useOfficialGuidelines ? "Official Guidelines" : "Custom Guidelines"}
+        </button>
+      </div>
+
+      {/* What-if Simulation with guideline mode */}
+      <SimulationPanel useOfficialGuidelines={useOfficialGuidelines} />
 
       {/* Patient cards + risk badges */}
       <div className={styles.patients}>
