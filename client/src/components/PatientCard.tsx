@@ -1,8 +1,7 @@
-// src/components/PatientCard.tsx
-
 import React from "react";
 import styles from "../styles/PatientCard.module.css";
 import RiskIndicator from "./RiskIndicator";
+import { useTranslation } from "react-i18next";
 
 interface PatientCardProps {
   patient: {
@@ -14,12 +13,16 @@ interface PatientCardProps {
     blood_pressure: number;
     bmi: number;
     glucose: number;
-    riskLevel?: string; 
+    riskLevel?: string;
     reasons?: string[];
   };
 }
 
-const PatientCard: React.FC<{ patient: PatientCardProps["patient"] }> = ({ patient }) => {
+const PatientCard: React.FC<{ patient: PatientCardProps["patient"] }> = ({
+  patient,
+}) => {
+  const { t } = useTranslation();
+
   const {
     name,
     age,
@@ -37,14 +40,25 @@ const PatientCard: React.FC<{ patient: PatientCardProps["patient"] }> = ({ patie
   return (
     <div className={styles.card}>
       <h3>{name}</h3>
-      <p><strong>Age:</strong> {age}</p>
-      <p><strong>Gender:</strong> {gender}</p>
-      <p><strong>Cholesterol:</strong> {cholesterol} mg/dL</p>
-      <p><strong>Blood Pressure:</strong> {blood_pressure} mmHg</p>
-      <p><strong>BMI:</strong> {bmi}</p>
-      <p><strong>Glucose:</strong> {glucose} mg/dL</p>
+      <p>
+        <strong>{t("age")}:</strong> {age}
+      </p>
+      <p>
+        <strong>{t("gender")}:</strong> {gender}
+      </p>
+      <p>
+        <strong>{t("cholesterol")}:</strong> {cholesterol} mg/dL
+      </p>
+      <p>
+        <strong>{t("bloodPressure")}:</strong> {blood_pressure} mmHg
+      </p>
+      <p>
+        <strong>{t("bmi")}:</strong> {bmi}
+      </p>
+      <p>
+        <strong>{t("glucose")}:</strong> {glucose} mg/dL
+      </p>
 
-      {/* ✅ unified prop name */}
       <RiskIndicator riskLevel={safeRiskLevel} />
 
       {reasons.length > 0 && (

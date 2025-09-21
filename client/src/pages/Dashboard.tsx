@@ -1,8 +1,7 @@
-// src/pages/Dashboard.tsx
-
 import React, { useEffect, useState } from "react";
 import { getPatients } from "../services/api";
 import PatientCard from "../components/PatientCard";
+import RiskIndicator from "../components/RiskIndicator";
 import CholesterolChart from "../Charts/CholesterolChart";
 import BPChart from "../Charts/BPChart";
 import BMIChart from "../Charts/BMIChart";
@@ -10,6 +9,7 @@ import TimelineChart from "../Charts/TimelineChart";
 import SimulationPanel from "../components/SimulationPanel";
 import { exportToPDF } from "../services/reportService";
 import styles from "../styles/Dashboard.module.css";
+import { useTranslation } from "react-i18next"; // ✅ import
 
 interface Patient {
   id: number;
@@ -25,10 +25,9 @@ interface Patient {
 }
 
 const Dashboard: React.FC = () => {
+  const { t, i18n } = useTranslation(); // ✅ hook
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // ✅ State for guideline toggle
   const [useOfficialGuidelines, setUseOfficialGuidelines] = useState(true);
 
   useEffect(() => {
@@ -46,12 +45,18 @@ const Dashboard: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <p className={styles.loading}>Loading patients...</p>;
+    return <p className={styles.loading}>{t("loading")}</p>;
   }
 
   return (
     <div className={styles.container} id="dashboard-report">
-      <h1 className={styles.title}>CardioRisk Visualizer Dashboard</h1>
+      <h1 className={styles.title}>{t("title")}</h1>
+
+      {/* Language Switcher */}
+      <div style={{ textAlign: "right", marginBottom: "10px" }}>
+        <button onClick={() => i18n.changeLanguage("en")}>EN</button>
+        <button onClick={() => i18n.changeLanguage("fr")}>FR</button>
+      </div>
 
       {/* Export button */}
       <div style={{ textAlign: "right", marginBottom: "20px" }}>
@@ -66,14 +71,14 @@ const Dashboard: React.FC = () => {
             cursor: "pointer",
           }}
         >
-          Export PDF
+          {t("exportPDF")}
         </button>
       </div>
 
       {/* ✅ Guideline Toggle */}
       <div style={{ marginBottom: "20px", textAlign: "center" }}>
         <label style={{ fontWeight: "bold", marginRight: "10px" }}>
-          Guideline Mode:
+          {t("guidelineMode")}:
         </label>
         <button
           onClick={() => setUseOfficialGuidelines(!useOfficialGuidelines)}
@@ -86,18 +91,19 @@ const Dashboard: React.FC = () => {
             cursor: "pointer",
           }}
         >
-          {useOfficialGuidelines ? "Official Guidelines" : "Custom Guidelines"}
+          {useOfficialGuidelines ? t("officialGuidelines") : t("customGuidelines")}
         </button>
       </div>
 
       {/* What-if Simulation with guideline mode */}
       <SimulationPanel useOfficialGuidelines={useOfficialGuidelines} />
 
-      {/* Patient cards (RiskIndicator is inside PatientCard now) */}
+      {/* Patient cards + risk badges */}
       <div className={styles.patients}>
         {patients.map((patient) => (
           <div key={patient.id} className={styles.patientWrapper}>
             <PatientCard patient={patient} />
+            <RiskIndicator riskLevel={patient.riskLevel} />
           </div>
         ))}
       </div>
