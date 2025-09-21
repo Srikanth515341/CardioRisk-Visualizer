@@ -7,7 +7,8 @@ import RiskIndicator from "../components/RiskIndicator";
 import CholesterolChart from "../Charts/CholesterolChart";
 import BPChart from "../Charts/BPChart";
 import BMIChart from "../Charts/BMIChart";
-import SimulationPanel from "../components/SimulationPanel"; // ✅ New import
+import TimelineChart from "../Charts/TimelineChart"; // ✅ added
+import SimulationPanel from "../components/SimulationPanel";
 import styles from "../styles/Dashboard.module.css";
 
 interface Patient {
@@ -49,9 +50,10 @@ const Dashboard: React.FC = () => {
     <div className={styles.container}>
       <h1 className={styles.title}>CardioRisk Visualizer Dashboard</h1>
 
-      {/* ✅ New Simulation Panel */}
+      {/* What-if Simulation */}
       <SimulationPanel />
 
+      {/* Patient cards + risk badges */}
       <div className={styles.patients}>
         {patients.map((patient) => (
           <div key={patient.id} className={styles.patientWrapper}>
@@ -61,10 +63,16 @@ const Dashboard: React.FC = () => {
         ))}
       </div>
 
+      {/* Summary charts */}
       <div className={styles.charts}>
         <CholesterolChart data={patients} />
         <BPChart data={patients} />
         <BMIChart data={patients} />
+      </div>
+
+      {/* Timeline chart (full width) */}
+      <div style={{ marginTop: 30 }}>
+        <TimelineChart />
       </div>
     </div>
   );
